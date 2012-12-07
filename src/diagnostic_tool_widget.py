@@ -153,7 +153,8 @@ class DiagnosticToolWidget(QWidget):
             #rospy.loginfo("move %s for about 5 seconds and then press circle when done", joint_name)
             wait_for_circle()
             get_diag_data(actuator_name)
-    
+        print "Finshed getting data"
+
     def close_all(self):
         for fig_name in self.plots: 
             plt.close()
