@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import roslib; roslib.load_manifest('pr2_motor_diagnostic_tool')
 import rospy
-from pr2_diagnostic_tool.srv import *
+from pr2_motor_diagnostic_tool.srv import *
 from pr2_mechanism_msgs.srv import LoadController, UnloadController, SwitchController, SwitchControllerRequest, ListControllers
 from std_msgs.msg import Float64
 from sensor_msgs.msg import Joy
@@ -36,7 +36,7 @@ def wait_for_circle():
       rospy.sleep(0.01) 
 
 def start_diag_controller(actuator_name):
-  rospy.set_param('diagnostic_controller/type', 'pr2_diagnostic_controller/DiagnosticControllerPlugin')
+  rospy.set_param('diagnostic_controller/type', 'pr2_motor_diagnostic_controller/DiagnosticControllerPlugin')
   rospy.set_param('diag_actuator_name',str(actuator_name))
   resp = load_controller('diagnostic_controller')
 

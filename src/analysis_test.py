@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 import roslib; roslib.load_manifest('pr2_motor_diagnostic_tool')
-from pr2_diagnostic_tool.msg import *
+from pr2_motor_diagnostic_tool.msg import *
 import os
 from yaml import load
 import argparse
@@ -99,8 +99,11 @@ class Diagnostic():
     (filename,velocity,spikes,acceleration,outlier_limit_neg,outlier_limit_pos,supply_voltage, measured_motor_voltage,executed_current, measured_current, r1, r2, r3) = param
     global plot_enabled
     plot_enabled = True
+     
+    fig1 = plt.figure(filename + '_1')
+    if r1:
+        fig1.suptitle("The encoder might be spoilt", fontsize=14)
 
-    plt.figure(filename + '_1')
     plt.subplot(311)
     plt.plot(velocity,label='velocity')
     plt.legend()
@@ -111,18 +114,21 @@ class Diagnostic():
     outlier_limit_pos = [temp_pos for val in range(0,len(velocity))]
 
     plt.subplot(312)
-    plt.plot(spikes,label='accelerati * velocity')
+    plt.plot(spikes,label='acceleration * velocity')
     plt.plot(outlier_limit_neg,'r')
     plt.plot(outlier_limit_pos,'r')
-#if r1:
-# plt.text(4, 1, "The encoder might be spoilt", ha='left')
     plt.legend()
 
     plt.subplot(313)
     plt.plot(acceleration,'g', label='acceleration')
     plt.legend()
 
-    plt.figure(filename + '_2')
+    fig2 = plt.figure(filename + '_2')
+    if r2:
+        fig2.suptitle("The encoder could be unplugged", fontsize=14)
+    if r3:
+        fig2.suptitle("The motor wires might be cut", fontsize=14)
+
     plt.plot(supply_voltage,'b',label='supply_voltage')
     plt.plot(measured_motor_voltage,'g',label='measured_motor_voltage')
     plt.plot(executed_current,'*y',label='executed_current')

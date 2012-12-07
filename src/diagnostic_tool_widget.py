@@ -44,8 +44,22 @@ class DiagnosticToolWidget(QWidget):
         self.loadFile.clicked[bool].connect(self.load_file)
         self.loadDirectory.clicked[bool].connect(self.load_directory)
         self.resetFilelist.clicked[bool].connect(self.reset_filelist)
-
+        templist = self.r_arm_actuators + self.l_arm_actuators + self.head_actuators
+        for joint in templist:
+            self.jointWidget.addItem(str(joint))	
+        self.jointWidget.itemSelectionChanged.connect(self.joint_widget_changed) 
+        
         rospy.Subscriber("joy", Joy, callback)
+
+    def joint_widget_changed(self):
+        self.jointnames = []
+	for joint in self.jointWidget.selectedItems():
+	   if joint.text() not in self.jointnames:
+	       self.jointnames.append(joint.text())
+	self.jointnames = [f.encode("ascii") for f in self.jointnames]
+
+        self.jointLabel.setText('Joints: ' + str(self.jointnames))
+        self.jointLabel.setWordWrap(True)
 
     def left_arm_selected(self, state):
         if state == Qt.Checked:
@@ -103,6 +117,9 @@ class DiagnosticToolWidget(QWidget):
         self.joint_list = []
 	self.jointnames = []
 
+        self.jointLabel.setText('Joints: ' + str(self.jointnames))
+        self.jointLabel.setWordWrap(True)
+
     def reset_filelist(self):
         self.filelist = []
 	self.filenames = []
@@ -113,21 +130,9 @@ class DiagnosticToolWidget(QWidget):
 
     def get_data_pressed(self):
         self.joint_list = []
-        if self.left_bool:
-            self.joint_list.extend(self.l_arm_actuators)
-	else:
-	    self.joint_list = [joint for joint in self.joint_list if joint not in self.l_arm_actuators]
-
-        if self.right_bool:
-            self.joint_list.extend(self.r_arm_actuators)
-	else:
-	    self.joint_list = [joint for joint in self.joint_list if joint not in self.r_arm_actuators]
-
-        if self.head_bool:
-            self.joint_list.extend(self.head_actuators)
-	else:
-	    self.joint_list = [joint for joint in self.joint_list if joint not in self.head_actuators]
-        
+        self.jointLabel.setText('Joints: ' + str(self.jointnames))
+        self.jointLabel.setWordWrap(True)
+        self.joint_list.extend(self.jointnames)
         folder = str(datetime.datetime.now())
         folder = folder.split(" ")
         folder = "_".join(folder)
